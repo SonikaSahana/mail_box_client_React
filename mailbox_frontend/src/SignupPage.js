@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Form, Button, Container, Alert } from "react-bootstrap";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { Form, Button, Container, Alert, Card } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -9,8 +9,7 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-
-  const auth = getAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,69 +17,81 @@ const Signup = () => {
     setSuccess(false);
 
     if (!email || !password || !confirmPassword) {
-      setError("All fields are required.");
+      setError("All fields are required");
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError("Passwords do not match");
       return;
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      console.log("User has successfully signed up");
+      const response = await axios.post("http://localhost:5000/api/auth/signup", { email, password });
+
       setSuccess(true);
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
+      setTimeout(() => navigate("/"), 2000);
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || "Signup failed");
     }
   };
 
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
-      <div className="w-50 p-4 border rounded shadow">
-        <h2 className="text-center">Signup</h2>
-        {error && <Alert variant="danger">{error}</Alert>}
-        {success && <Alert variant="success">User has successfully signed up!</Alert>}
-        <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control 
-              type="email" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              required 
-            />
-          </Form.Group>
+      <Card className="shadow p-4" style={{ width: "400px" }}>
+        <Card.Body>
+          <h2 className="text-center">SignUp</h2>
+          {error && <Alert variant="danger">{error}</Alert>}
+          {success && <Alert variant="success">Signup successful! Redirecting...</Alert>}
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Email address</Form.Label>
+              <Form.Control 
+                type="email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                required 
+              />
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Password</Form.Label>
-            <Form.Control 
-              type="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
-            />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Password</Form.Label>
+              <Form.Control 
+                type="password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                required 
+              />
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Confirm Password</Form.Label>
-            <Form.Control 
-              type="password" 
-              value={confirmPassword} 
-              onChange={(e) => setConfirmPassword(e.target.value)} 
-              required 
-            />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Confirm Password</Form.Label>
+              <Form.Control 
+                type="password" 
+                value={confirmPassword} 
+                onChange={(e) => setConfirmPassword(e.target.value)} 
+                required 
+              />
+            </Form.Group>
 
-          <Button variant="primary" type="submit" className="w-100">
-            Signup
-          </Button>
-        </Form>
-      </div>
+            <Button variant="primary" type="submit" className="w-100">
+              Sign up
+            </Button>
+          </Form>
+
+          <div className="text-center mt-3">
+            <p>
+              Have an account?{" "}
+              <span 
+                style={{ color: "blue", cursor: "pointer" }} 
+                onClick={() => navigate("/")}
+              >
+                Login
+              </span>
+            </p>
+          </div>
+        </Card.Body>
+      </Card>
     </Container>
   );
 };
