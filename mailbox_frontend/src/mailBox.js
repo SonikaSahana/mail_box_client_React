@@ -19,6 +19,11 @@ const Mailbox = () => {
               ✉️ Compose
             </Button>
           </Link>
+          <Link to="/sent">
+  <Button variant="info" size="lg" className="w-100">
+    📤 Sent
+  </Button>
+</Link>
         </div>
       </Card>
     </Container>
