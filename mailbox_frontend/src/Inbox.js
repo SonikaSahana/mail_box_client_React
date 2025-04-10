@@ -1,54 +1,27 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import "./inbox.css";
+import useFetchMails from "../hooks/useFetchMails";
 
 const Inbox = () => {
-  const [mails, setMails] = useState([]);
   const [selectedMail, setSelectedMail] = useState(null);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const intervalRef = useRef(null);
+  const userEmail = localStorage.getItem("userEmail");
 
-  const fetchMails = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const userEmail = localStorage.getItem("userEmail");
-      const res = await axios.get(`http://localhost:5000/api/mails/inbox/${userEmail}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const newMails = res.data;
-
-      // If mail list has changed in length or content, update state
-      if (JSON.stringify(newMails) !== JSON.stringify(mails)) {
-        setMails(newMails);
-        const unread = newMails.filter(mail => !mail.isRead).length;
-        setUnreadCount(unread);
-      }
-    } catch (err) {
-      console.error("Error fetching inbox mails:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchMails(); // Initial fetch
-
-    intervalRef.current = setInterval(() => {
-      fetchMails();
-    }, 2000);
-
-    return () => clearInterval(intervalRef.current); // Cleanup on unmount
-  }, []);
+  const { emails: mails, unreadCount, refresh } = useFetchMails(
+    `http://localhost:5000/api/mails/inbox/${userEmail}`,
+    true
+  );
 
   const handleMailClick = async (mail) => {
     if (!mail.isRead) {
       try {
         await axios.patch(`http://localhost:5000/api/mails/read/${mail._id}`);
+        refresh();
       } catch (err) {
         console.error("Error marking mail as read:", err);
       }
     }
     setSelectedMail(mail);
-    fetchMails(); // Refresh after marking read
   };
 
   const handleDelete = async (mailId) => {
@@ -57,7 +30,7 @@ const Inbox = () => {
       await axios.delete(`http://localhost:5000/api/mails/${mailId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setMails((prevMails) => prevMails.filter((mail) => mail._id !== mailId));
+      refresh();
       setSelectedMail(null);
     } catch (err) {
       console.error("Error deleting mail:", err);
@@ -78,10 +51,7 @@ const Inbox = () => {
                   {!mail.isRead && <span className="unread-dot" />}
                   <strong>{mail.subject}</strong> — {mail.sender}
                 </div>
-                <button
-                  className="delete-btn"
-                  onClick={() => handleDelete(mail._id)}
-                >
+                <button className="delete-btn" onClick={() => handleDelete(mail._id)}>
                   Delete
                 </button>
               </li>

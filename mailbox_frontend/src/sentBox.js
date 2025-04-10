@@ -1,28 +1,14 @@
-
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import "./inbox.css"; 
+import React, { useState } from "react";
+import "./inbox.css";
+import useFetchMails from "../hooks/useFetchMails";
 
 const SentBox = () => {
-  const [sentMails, setSentMails] = useState([]);
   const [selectedMail, setSelectedMail] = useState(null);
+  const userEmail = localStorage.getItem("userEmail");
 
-  useEffect(() => {
-    fetchSentMails();
-  }, []);
-
-  const fetchSentMails = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const userEmail = localStorage.getItem("userEmail");
-      const res = await axios.get(`http://localhost:5000/api/mails/sent/${userEmail}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setSentMails(res.data);
-    } catch (err) {
-      console.error("Error fetching sent mails:", err);
-    }
-  };
+  const { emails: sentMails } = useFetchMails(
+    `http://localhost:5000/api/mails/sent/${userEmail}`
+  );
 
   const handleMailClick = (mail) => {
     setSelectedMail(mail);
