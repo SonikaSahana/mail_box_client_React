@@ -1,35 +1,52 @@
 const Email = require("../model/emailModel");
 
-// 📩 Send Email
-const sendEmail = async (req, res) => {
+exports.sendEmail = async (req, res) => {
+  const { sender, receiver, subject, message } = req.body;
+
+  if (!sender || !receiver || !subject || !message) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
   try {
-    const { sender, receiver, subject, message } = req.body;
     const email = new Email({ sender, receiver, subject, message });
     await email.save();
-    res.json({ success: true, message: "Email sent successfully!" });
-  } catch (error) {
-    res.status(500).json({ success: false, error: "Error sending email" });
+    res.status(200).json({ success: true, message: "Email stored successfully!" });
+  } catch (err) {
+    console.error("Error saving email:", err);
+    res.status(500).json({ error: "Failed to store email." });
   }
 };
 
-// 📥 Get Inbox (Received Emails)
-const getInbox = async (req, res) => {
+exports.getInbox = async (req, res) => {
   try {
-    const emails = await Email.find({ receiver: req.params.email });
-    res.json(emails);
-  } catch (error) {
-    res.status(500).json({ error: "Error fetching inbox" });
+    const inbox = await Email.find({ receiver: req.params.email }).sort({ createdAt: -1 });
+    res.status(200).json(inbox);
+  } catch (err) {
+    console.error("Inbox fetch error:", err);
+    res.status(500).json({ error: "Failed to fetch inbox." });
   }
 };
 
-// 📤 Get Sent Emails
-const getSentEmails = async (req, res) => {
+
+
+
+exports.getSent = async (req, res) => {
   try {
-    const emails = await Email.find({ sender: req.params.email });
-    res.json(emails);
-  } catch (error) {
-    res.status(500).json({ error: "Error fetching sent emails" });
+    const sent = await Email.find({ sender: req.params.email });
+    res.status(200).json(sent);
+  } catch (err) {
+    console.error("Sent fetch error:", err);
+    res.status(500).json({ error: "Failed to fetch sent mails." });
   }
 };
 
-module.exports = { sendEmail, getInbox, getSentEmails };
+exports.markAsRead = async (req, res) => {
+  const { mailId } = req.params;
+  try {
+    await Email.findByIdAndUpdate(mailId, { isRead: true });
+    res.status(200).json({ success: true, message: "Mail marked as read" });
+  } catch (err) {
+    console.error("Mark as read error:", err);
+    res.status(500).json({ error: "Failed to mark mail as read" });
+  }
+};

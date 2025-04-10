@@ -1,0 +1,35 @@
+.mail-container {
+    padding: 20px;
+    max-width: 700px;
+    margin: auto;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+  }
+  
+  .mail-container input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 1rem;
+  }
+  
+  .editor-wrapper {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #fff;
+  }
+  
+  .actions {
+    text-align: right;
+  }
+  
+  .actions button {
+    padding: 10px 20px;
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  

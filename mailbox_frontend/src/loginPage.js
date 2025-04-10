@@ -25,6 +25,7 @@ const Login = () => {
       localStorage.setItem("token", response.data.token);
       setSuccess(true);
       setTimeout(() => navigate("/mailbox"), 2000);
+      // setTimeout(() => navigate("/homepage"), 2000);
     } catch (err) {
       setError(err.response?.data?.message || "Login failed!");
     }

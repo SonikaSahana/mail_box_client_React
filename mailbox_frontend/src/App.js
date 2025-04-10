@@ -4,6 +4,7 @@ import Signup from "./SignupPage";
 import Login from "./loginPage";
 import Mailbox from "./mailBox";
 import Emailcomposer from "./emailComposer"
+import Inbox from "./Inbox";
 
 const App = () => {
   return (
@@ -13,7 +14,8 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/mailbox" element={<Mailbox />} />
         <Route path="/homepage" element={<Emailcomposer />} />
-      </Routes>
+        <Route path="/inbox" element={<Inbox />} />
+        </Routes>
     </Router>
   );
 };

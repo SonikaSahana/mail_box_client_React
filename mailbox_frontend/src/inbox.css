@@ -1,0 +1,75 @@
+.inbox-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+  
+  .inbox-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .mail-card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    transition: box-shadow 0.2s ease-in-out;
+    background-color: #f9f9f9;
+  }
+  
+  .mail-card:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .mail-subject {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  
+  .mail-sender {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 4px;
+  }
+  
+  .mail-message {
+    font-size: 16px;
+    color: #444;
+  }
+
+  .inbox-container {
+    padding: 20px;
+  }
+  
+  .mail-item {
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .mail-item:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .unread-dot {
+    height: 10px;
+    width: 10px;
+    background-color: blue;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+  }
+  
+  .mail-detail {
+    margin-top: 20px;
+    padding: 15px;
+    border-top: 1px solid #aaa;
+  }
+  
+  
