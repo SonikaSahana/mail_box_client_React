@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import "./inbox.css";
 
@@ -6,10 +6,7 @@ const Inbox = () => {
   const [mails, setMails] = useState([]);
   const [selectedMail, setSelectedMail] = useState(null);
   const [unreadCount, setUnreadCount] = useState(0);
-
-  useEffect(() => {
-    fetchMails();
-  }, []);
+  const intervalRef = useRef(null);
 
   const fetchMails = async () => {
     try {
@@ -18,13 +15,29 @@ const Inbox = () => {
       const res = await axios.get(`http://localhost:5000/api/mails/inbox/${userEmail}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setMails(res.data);
-      const unread = res.data.filter(mail => !mail.isRead).length;
-      setUnreadCount(unread);
+
+      const newMails = res.data;
+
+      // If mail list has changed in length or content, update state
+      if (JSON.stringify(newMails) !== JSON.stringify(mails)) {
+        setMails(newMails);
+        const unread = newMails.filter(mail => !mail.isRead).length;
+        setUnreadCount(unread);
+      }
     } catch (err) {
       console.error("Error fetching inbox mails:", err);
     }
   };
+
+  useEffect(() => {
+    fetchMails(); // Initial fetch
+
+    intervalRef.current = setInterval(() => {
+      fetchMails();
+    }, 2000);
+
+    return () => clearInterval(intervalRef.current); // Cleanup on unmount
+  }, []);
 
   const handleMailClick = async (mail) => {
     if (!mail.isRead) {
@@ -35,7 +48,7 @@ const Inbox = () => {
       }
     }
     setSelectedMail(mail);
-    fetchMails();
+    fetchMails(); // Refresh after marking read
   };
 
   const handleDelete = async (mailId) => {
