@@ -10,6 +10,7 @@ router.post("/send", sendEmail);
 router.get("/inbox/:email", getInbox);
 router.get("/sent/:email", getSent);
 router.patch("/read/:mailId", markAsRead);
+router.delete("/mails/:id", deleteMail);
 
 
 module.exports = router;

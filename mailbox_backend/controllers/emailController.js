@@ -50,3 +50,13 @@ exports.markAsRead = async (req, res) => {
     res.status(500).json({ error: "Failed to mark mail as read" });
   }
 };
+
+exports.deleteMail = async (req, res) => {
+  try {
+    const mailId = req.params.id;
+    await Email.findByIdAndDelete(mailId);
+    res.status(200).json({ message: "Mail deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete mail" });
+  }
+};

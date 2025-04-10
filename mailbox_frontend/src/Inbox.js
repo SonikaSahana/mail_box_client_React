@@ -28,10 +28,27 @@ const Inbox = () => {
 
   const handleMailClick = async (mail) => {
     if (!mail.isRead) {
-      await axios.patch(`http://localhost:5000/api/mails/read/${mail._id}`);
+      try {
+        await axios.patch(`http://localhost:5000/api/mails/read/${mail._id}`);
+      } catch (err) {
+        console.error("Error marking mail as read:", err);
+      }
     }
     setSelectedMail(mail);
-    fetchMails(); 
+    fetchMails();
+  };
+
+  const handleDelete = async (mailId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:5000/api/mails/${mailId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMails((prevMails) => prevMails.filter((mail) => mail._id !== mailId));
+      setSelectedMail(null);
+    } catch (err) {
+      console.error("Error deleting mail:", err);
+    }
   };
 
   return (
@@ -43,9 +60,17 @@ const Inbox = () => {
         ) : (
           <ul>
             {mails.map((mail) => (
-              <li key={mail._id} className="mail-item" onClick={() => handleMailClick(mail)}>
-                {!mail.isRead && <span className="unread-dot" />}
-                <strong>{mail.subject}</strong> — {mail.sender}
+              <li key={mail._id} className="mail-item">
+                <div onClick={() => handleMailClick(mail)} style={{ flex: 1, cursor: "pointer" }}>
+                  {!mail.isRead && <span className="unread-dot" />}
+                  <strong>{mail.subject}</strong> — {mail.sender}
+                </div>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(mail._id)}
+                >
+                  Delete
+                </button>
               </li>
             ))}
           </ul>

@@ -46,12 +46,6 @@
     padding: 20px;
   }
   
-  .mail-item {
-    border-bottom: 1px solid #ccc;
-    padding: 10px;
-    cursor: pointer;
-    position: relative;
-  }
   
   .mail-item:hover {
     background-color: #f5f5f5;
@@ -71,5 +65,23 @@
     padding: 15px;
     border-top: 1px solid #aaa;
   }
+  .mail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  
+  .delete-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
   
   
